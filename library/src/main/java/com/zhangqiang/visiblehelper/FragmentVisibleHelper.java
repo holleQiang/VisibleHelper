@@ -26,10 +26,10 @@ public final class FragmentVisibleHelper extends VisibleHelper{
 
     public void setUserVisibleHint(boolean isVisibleToUser) {
         boolean isChanged = mUserVisibleHint ^ isVisibleToUser;
+        mUserVisibleHint = isVisibleToUser;
         if (isChanged && visibleFragment.isResumed()) {
             notifyVisibilityChange(isVisibleToUser);
         }
-        mUserVisibleHint = isVisibleToUser;
     }
 
     public void onPause() {
