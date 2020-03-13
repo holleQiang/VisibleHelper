@@ -6,10 +6,11 @@ package com.zhangqiang.visiblehelper;
  * Email:852286406@share_qq.com
  * Github:https://github.com/holleQiang
  */
-public final class FragmentVisibleHelper extends VisibleHelper{
+public final class FragmentVisibleHelper extends VisibleHelper {
 
     private VisibleFragment visibleFragment;
     private boolean mUserVisibleHint;
+    private boolean started = false;
 
     public FragmentVisibleHelper(VisibleFragment visibleFragment) {
         this.visibleFragment = visibleFragment;
@@ -17,7 +18,7 @@ public final class FragmentVisibleHelper extends VisibleHelper{
     }
 
     public boolean isVisibleToUser() {
-        return visibleFragment.isResumed() && !visibleFragment.isHidden() && mUserVisibleHint;
+        return started && !visibleFragment.isHidden() && mUserVisibleHint;
     }
 
     public void onHiddenChanged(boolean hidden) {
@@ -27,20 +28,22 @@ public final class FragmentVisibleHelper extends VisibleHelper{
     public void setUserVisibleHint(boolean isVisibleToUser) {
         boolean isChanged = mUserVisibleHint ^ isVisibleToUser;
         mUserVisibleHint = isVisibleToUser;
-        if (isChanged && visibleFragment.isResumed()) {
+        if (isChanged && started) {
             notifyVisibilityChange(isVisibleToUser);
         }
     }
 
-    public void onPause() {
+    public void onStart() {
+        started = true;
         if (visibleFragment.getUserVisibleHint() && !visibleFragment.isHidden()) {
-            notifyVisibilityChange(false);
+            notifyVisibilityChange(true);
         }
     }
 
-    public void onResume() {
+    public void onStop() {
+        started = false;
         if (visibleFragment.getUserVisibleHint() && !visibleFragment.isHidden()) {
-            notifyVisibilityChange(true);
+            notifyVisibilityChange(false);
         }
     }
 

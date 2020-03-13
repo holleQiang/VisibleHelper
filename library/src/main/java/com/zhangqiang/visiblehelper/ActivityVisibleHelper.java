@@ -4,17 +4,17 @@ public class ActivityVisibleHelper extends VisibleHelper {
 
     private boolean isVisible = false;
 
-    public void onPause() {
-        if (isVisible) {
-            isVisible = false;
-            notifyVisibilityChange(false);
-        }
-    }
-
-    public void onResume() {
+    public void onStart() {
         if (!isVisible) {
             isVisible = true;
             notifyVisibilityChange(true);
+        }
+    }
+
+    public void onStop() {
+        if (isVisible) {
+            isVisible = false;
+            notifyVisibilityChange(false);
         }
     }
 

@@ -10,7 +10,5 @@ public interface VisibleFragment {
 
     boolean getUserVisibleHint();
 
-    boolean isResumed();
-
     boolean isHidden();
 }

@@ -24,19 +24,16 @@ public class VisibleFragmentV4Impl implements VisibleFragment {
     }
 
     @Override
-    public boolean isResumed() {
-        return fragment.isResumed();
-    }
-
-    @Override
     public boolean isHidden() {
-        Fragment parentFragment = fragment.getParentFragment();
-        while (parentFragment != null) {
-            if (parentFragment.isHidden()) {
-                return true;
+
+        Fragment temp = fragment;
+        while (!temp.isHidden()) {
+
+            temp = temp.getParentFragment();
+            if (temp == null) {
+                return false;
             }
-            parentFragment = parentFragment.getParentFragment();
         }
-        return fragment.isHidden();
+        return true;
     }
 }
