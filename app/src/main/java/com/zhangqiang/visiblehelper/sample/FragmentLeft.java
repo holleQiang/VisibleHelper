@@ -6,9 +6,16 @@ import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentPagerAdapter;
 import android.support.v4.view.ViewPager;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+
+import com.zhangqiang.holderfragment.HolderFragment;
+
+import java.lang.reflect.InvocationHandler;
+import java.lang.reflect.Method;
+import java.lang.reflect.Proxy;
 
 public class FragmentLeft extends BaseFragment {
 
@@ -33,5 +40,12 @@ public class FragmentLeft extends BaseFragment {
                 return 5;
             }
         });
+        HolderFragment.forFragment(this).registerLifecycleCallback((HolderFragment.LifecycleCallback) Proxy.newProxyInstance(getClass().getClassLoader(), new Class[]{HolderFragment.LifecycleCallback.class}, new InvocationHandler() {
+            @Override
+            public Object invoke(Object proxy, Method method, Object[] args) throws Throwable {
+                Log.i("Test","=============" + method.getName());
+                return null;
+            }
+        }));
     }
 }

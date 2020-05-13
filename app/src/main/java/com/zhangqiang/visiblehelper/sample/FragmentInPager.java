@@ -8,13 +8,11 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.TextView;
-
-import com.zhangqiang.visiblehelper.OnVisibilityChangeListener;
 
 public class FragmentInPager extends BaseFragment {
 
-    private TextView tvStatus;
+    FragmentLeft fragment = new FragmentLeft();
+
 
     @Nullable
     @Override
@@ -24,14 +22,20 @@ public class FragmentInPager extends BaseFragment {
 
     @Override
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
-        tvStatus = view.findViewById(R.id.tv_status);
-        tvStatus.setText("visible:" + getVisibleHelper().isVisible());
-        log();
-        getVisibleHelper().addVisibilityChangeListener(new OnVisibilityChangeListener() {
+        view.findViewById(R.id.tv_add).setOnClickListener(new View.OnClickListener() {
             @Override
-            public void onVisibilityChange(boolean isVisible) {
-                tvStatus.setText("visible:" + isVisible);
-                log();
+            public void onClick(View v) {
+                getChildFragmentManager().beginTransaction()
+                        .add(R.id.fl_fragment_container, fragment)
+                        .commitAllowingStateLoss();
+            }
+        });
+        view.findViewById(R.id.tv_remove).setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                getChildFragmentManager().beginTransaction()
+                        .remove(fragment)
+                        .commitAllowingStateLoss();
             }
         });
     }

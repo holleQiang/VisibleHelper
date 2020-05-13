@@ -27,14 +27,9 @@ public final class FragmentVisibleHelper extends VisibleHelper {
     }
 
     public void onHiddenChanged() {
-        final boolean newStatus = isVisibleToUser();
-        if (mVisible != newStatus) {
-            mVisible = newStatus;
-            notifyVisibilityChange(newStatus);
-        }
+        checkStatusAndNotify();
         if (fragment.getHost() != null) {
             FragmentManager fragmentManager = fragment.getChildFragmentManager();
-            fragmentManager.executePendingTransactions();
             List<Fragment> fragments = fragmentManager.getFragments();
             if (!fragments.isEmpty()) {
                 for (Fragment childFragment : fragments) {
@@ -50,14 +45,9 @@ public final class FragmentVisibleHelper extends VisibleHelper {
     }
 
     public void setUserVisibleHint() {
-        final boolean newStatus = isVisibleToUser();
-        if (mVisible != newStatus) {
-            mVisible = newStatus;
-            notifyVisibilityChange(newStatus);
-        }
+        checkStatusAndNotify();
         if (fragment.getHost() != null) {
             FragmentManager fragmentManager = fragment.getChildFragmentManager();
-            fragmentManager.executePendingTransactions();
             List<Fragment> fragments = fragmentManager.getFragments();
             if (!fragments.isEmpty()) {
                 for (Fragment childFragment : fragments) {
@@ -74,20 +64,12 @@ public final class FragmentVisibleHelper extends VisibleHelper {
 
     public void onStart() {
         mStarted = true;
-        boolean newStatus = isVisibleToUser();
-        if (mVisible != newStatus) {
-            mVisible = newStatus;
-            notifyVisibilityChange(newStatus);
-        }
+        checkStatusAndNotify();
     }
 
     public void onStop() {
         mStarted = false;
-        boolean newStatus = isVisibleToUser();
-        if (mVisible != newStatus) {
-            mVisible = newStatus;
-            notifyVisibilityChange(newStatus);
-        }
+        checkStatusAndNotify();
     }
 
     @Override
@@ -116,5 +98,14 @@ public final class FragmentVisibleHelper extends VisibleHelper {
             temp = temp.getParentFragment();
         }
         return true;
+    }
+
+    private void checkStatusAndNotify(){
+
+        boolean newStatus = isVisibleToUser();
+        if (mVisible != newStatus) {
+            mVisible = newStatus;
+            notifyVisibilityChange(newStatus);
+        }
     }
 }
