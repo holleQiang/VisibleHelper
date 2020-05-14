@@ -1,8 +1,11 @@
 package com.zhangqiang.visiblehelper;
 
+import android.support.annotation.IntDef;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 
+import java.lang.annotation.Retention;
+import java.lang.annotation.RetentionPolicy;
 import java.util.List;
 
 /**
@@ -13,9 +16,15 @@ import java.util.List;
  */
 public final class FragmentVisibleHelper extends VisibleHelper {
 
+    public static final int TRIGGER_INITIAL = -1;
+    public static final int TRIGGER_STARTED = 0;
+    public static final int TRIGGER_HIDDEN_CHANGED = 1;
+    public static final int TRIGGER_SET_USER_VISIBLE_HINT = 2;
     private Fragment fragment;
     private boolean mStarted;
     private boolean mVisible;
+    @Trigger
+    private int mTrigger = TRIGGER_INITIAL;
 
     public FragmentVisibleHelper(Fragment fragment) {
         this.fragment = fragment;
@@ -27,7 +36,7 @@ public final class FragmentVisibleHelper extends VisibleHelper {
     }
 
     public void onHiddenChanged() {
-        checkStatusAndNotify();
+        checkStatusAndNotify(TRIGGER_HIDDEN_CHANGED);
         if (fragment.getHost() != null) {
             FragmentManager fragmentManager = fragment.getChildFragmentManager();
             List<Fragment> fragments = fragmentManager.getFragments();
@@ -45,7 +54,7 @@ public final class FragmentVisibleHelper extends VisibleHelper {
     }
 
     public void setUserVisibleHint() {
-        checkStatusAndNotify();
+        checkStatusAndNotify(TRIGGER_SET_USER_VISIBLE_HINT);
         if (fragment.getHost() != null) {
             FragmentManager fragmentManager = fragment.getChildFragmentManager();
             List<Fragment> fragments = fragmentManager.getFragments();
@@ -64,12 +73,12 @@ public final class FragmentVisibleHelper extends VisibleHelper {
 
     public void onStart() {
         mStarted = true;
-        checkStatusAndNotify();
+        checkStatusAndNotify(TRIGGER_STARTED);
     }
 
     public void onStop() {
         mStarted = false;
-        checkStatusAndNotify();
+        checkStatusAndNotify(TRIGGER_STARTED);
     }
 
     @Override
@@ -100,12 +109,27 @@ public final class FragmentVisibleHelper extends VisibleHelper {
         return true;
     }
 
-    private void checkStatusAndNotify(){
+    private void checkStatusAndNotify(int trigger) {
 
         boolean newStatus = isVisibleToUser();
         if (mVisible != newStatus) {
             mVisible = newStatus;
+            mTrigger = trigger;
             notifyVisibilityChange(newStatus);
         }
+    }
+
+    @Trigger
+    public int getTrigger() {
+        return mTrigger;
+    }
+
+    @Retention(RetentionPolicy.SOURCE)
+    @IntDef(value = {TRIGGER_INITIAL,
+            TRIGGER_HIDDEN_CHANGED,
+            TRIGGER_SET_USER_VISIBLE_HINT,
+            TRIGGER_STARTED})
+    @interface Trigger {
+
     }
 }
